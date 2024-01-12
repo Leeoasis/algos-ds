@@ -1,0 +1,38 @@
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def reverse_k_group(head, k):
+    def reverse_group(prev, curr, k):
+        # Helper function to reverse a group of k nodes starting from curr
+        tail = prev.next  # Save the original tail of the group
+        for _ in range(k):
+            if not curr:
+                return tail, prev.next  # Not enough nodes to reverse, return original tail and head
+            temp = curr.next
+            curr.next = prev.next
+            prev.next = curr
+            curr = temp
+        return tail, prev.next  # Return the new tail and head of the reversed group
+
+    dummy = ListNode(0)
+    dummy.next = head
+    prev = dummy
+
+    while True:
+        tail, new_head = reverse_group(prev, prev.next, k)
+        if not tail:
+            break  # Reached the end of the list, no more groups to reverse
+        prev.next = new_head
+        prev = tail
+
+    return dummy.next
+
+# Example usage:
+# Create a linked list: 1 -> 2 -> 3 -> 4 -> 5
+head = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
+k = 2
+result = reverse_k_group(head, k)
+
+# The modified list after reversing nodes in groups of k: 2 -> 1 -> 4 -> 3 -> 5
